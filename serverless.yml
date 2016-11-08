@@ -1,0 +1,54 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: linebotfactory # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: prod
+  region: ap-northeast-1
+
+# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Resource: "arn:aws:dynamodb:ap-northeast-1:*:*"
+      Action:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+
+functions:
+  linebot:
+    handler: index.handler
+    events:
+      - http:
+          path: linebot
+          method: post
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    linebotfactory:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: linebotfactory_table
+        AttributeDefinitions:
+          - AttributeName: mid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: mid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
